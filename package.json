@@ -1,0 +1,16 @@
+{
+  "license": "AGPL-3.0-only",
+  "author": "contractus",
+  "name": "smart-agent-onboarding",
+  "description": "smart agent that helps users to get into contact with new or existing members",
+  "version": "0.9.0",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "dependencies": {
+    "nodemailer": "^4.4.2"
+  },
+  "peerDependencies": {
+    "actionhero": "18.1.0"
+  }
+}
