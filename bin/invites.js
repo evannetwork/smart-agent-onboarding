@@ -23,6 +23,8 @@
   on other blockchains than evan.network. 
   
   For more information, please contact evan GmbH at this address: https://evan.network/license/ 
+
+  
 */
 
 'use strict'
@@ -80,6 +82,7 @@ module.exports = class InvitesCLI extends CLI {
       input: require('fs').createReadStream(params.list)
     })
     var p = []
+    api.log("Start Sending")
     return new Promise((resolve, reject) => {
       var recipients = []
       lines.on('line',(recipient) => {
@@ -97,10 +100,13 @@ module.exports = class InvitesCLI extends CLI {
                                                          subject: params.subject,
                                                          lang: params.lang,
                                                          body: params.text,
-                                                         fromAlias: params.alias
+                                                         fromAlias: params.alias,
+                                                         to: recipients[i],
                                                        }))
           }
-          Promise.all(p).then(() => { resolve(); } )
+          Promise.all(p).then(() => { resolve();
+                                      //process.exit()
+                                    } )
         })
     })
   }

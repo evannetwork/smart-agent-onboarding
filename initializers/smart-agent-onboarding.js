@@ -23,6 +23,8 @@
   on other blockchains than evan.network. 
   
   For more information, please contact evan GmbH at this address: https://evan.network/license/ 
+
+  
 */
 
 'use strict'
@@ -49,7 +51,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
     // create onboarding session
     const sessionId = uuid.v4()
     api.log(`starting onboarding session "${sessionId}"`)
-    await api.redis.clients.client.hmset(`contractus:smartAgentOnboarding:sessions:${sessionId}`, {
+    await api.redis.clients.client.hmset(`evannetwork:smartAgentOnboarding:sessions:${sessionId}`, {
       inviter: from,
       invited: to,
       mailId,
@@ -76,11 +78,6 @@ module.exports = class SmartAgentOnboarding extends Initializer {
       subject: mailData.subject,
       to: mailData.to
     }
-
-    api.log(from)
-    api.log(mailData)
-    api.log("mail object created")
-
     
     return promisify(transport.sendMail).bind(transport)(mail)
   }
@@ -99,14 +96,14 @@ module.exports = class SmartAgentOnboarding extends Initializer {
         try {
           let processingQueue = Promise.resolve()
           // get block from last uptime
-          const lastBlock = (await api.redis.clients.client.get('contractus:smartAgentOnboarding:lastBlock')) || (await api.eth.web3.eth.getBlockNumber())
+          const lastBlock = (await api.redis.clients.client.get('evannetwork:smartAgentOnboarding:lastBlock')) || (await api.eth.web3.eth.getBlockNumber())
           await api.bcc.eventHub.subscribe(
             'EventHub',
             null,
             'MailEvent',
             async (event) => {
               // store block as uptime
-              await api.redis.clients.client.set('contractus:smartAgentOnboarding:lastBlock', event.blockNumber)
+              await api.redis.clients.client.set('evannetwork:smartAgentOnboarding:lastBlock', event.blockNumber)
               const {sender, recipient} = event.returnValues
               const mailboxDomain = api.bcc.nameResolver.getDomainName(api.config.eth.nameResolver.domains.mailbox)
               const mailboxAddress = await api.bcc.nameResolver.getAddress(mailboxDomain)
@@ -169,12 +166,12 @@ module.exports = class SmartAgentOnboarding extends Initializer {
       sendInvite: this.sendInvite,
       sendReplyAccept: async (sessionId, accountId) => {
         const { inviter, invited, weiToSend, mailId, } = await api.redis.clients.client.hgetall(
-          `contractus:smartAgentOnboarding:sessions:${sessionId}`)
+          `evannetwork:smartAgentOnboarding:sessions:${sessionId}`)
         if (!inviter || !invited) {
           throw new Error('invalid invitationId')
         }
         // withdraw UTC
-        await api.redis.clients.client.del(`contractus:smartAgentOnboarding:sessions:${sessionId}`)
+        await api.redis.clients.client.del(`evannetwork:smartAgentOnboarding:sessions:${sessionId}`)
 
         if (mailId) {
           const transferedWei = await smartAgentOnboarding.mailbox.getBalanceFromMail(mailId)
@@ -194,11 +191,11 @@ module.exports = class SmartAgentOnboarding extends Initializer {
       },
       sendReplyReject: async (sessionId, bmailBody) => {
         const { inviter, invited, weiToSend, mailId, } = await api.redis.clients.client.hgetall(
-          `contractus:smartAgentOnboarding:sessions:${sessionId}`)
+          `evannetwork:smartAgentOnboarding:sessions:${sessionId}`)
         if (!inviter || !invited) {
           throw new Error('invalid invitationId')
         }
-        await api.redis.clients.client.del(`contractus:smartAgentOnboarding:sessions:${sessionId}`)
+        await api.redis.clients.client.del(`evannetwork:smartAgentOnboarding:sessions:${sessionId}`)
         smartAgentOnboarding.mailbox.sendMail(
           {
             content: {
