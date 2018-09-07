@@ -23,8 +23,6 @@
   on other blockchains than evan.network. 
   
   For more information, please contact evan GmbH at this address: https://evan.network/license/ 
-
-  
 */
 
 'use strict'
@@ -34,9 +32,9 @@ const {promisify} = require('util')
 const _ = require('underscore')
 const uuid = require('uuid')
 
+
 const config = api.config.smartAgentOnboarding
 let transport
-
 
 module.exports = class SmartAgentOnboarding extends Initializer {
   constructor () {
@@ -45,41 +43,6 @@ module.exports = class SmartAgentOnboarding extends Initializer {
     this.loadPriority = 2400
     this.startPriority = 2400
     this.stopPriority = 2400
-  }
-
-  async sendInvite(from, to, amount, transferred, mailData, mailId = null) {
-    // create onboarding session
-    const sessionId = uuid.v4()
-    api.log(`starting onboarding session "${sessionId}"`)
-    await api.redis.clients.client.hmset(`evannetwork:smartAgentOnboarding:sessions:${sessionId}`, {
-      inviter: from,
-      invited: to,
-      mailId,
-      weiToSend: transferred || api.eth.web3.utils.toWei(amount)
-    })
-    if(typeof mailData == 'string'){
-      mailData = JSON.parse(mailData)
-    }
-
-    if(!config.mailOptions.mailBody[mailData.lang]) mailData.lang = 'en'
-    if(!amount && transferred) amount = api.eth.web3.utils.fromWei(transferred);
-
-    const mailBody = _.template(config.mailOptions.mailBody[mailData.lang])({
-      sessionId,
-      inviteeAddress: from,
-      inviteeAlias: mailData.fromAlias,
-      eveAmount: amount,
-      targetMail: mailData.to,
-      inviteMail: mailData.body
-    })
-    const mail = {
-      from: config.mailOptions.from,
-      html: mailBody,
-      subject: mailData.subject,
-      to: mailData.to
-    }
-    
-    return promisify(transport.sendMail).bind(transport)(mail)
   }
 
   async initialize () {
@@ -97,7 +60,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           let processingQueue = Promise.resolve()
           // get block from last uptime
           const lastBlock = (await api.redis.clients.client.get('evannetwork:smartAgentOnboarding:lastBlock')) || (await api.eth.web3.eth.getBlockNumber())
-          await api.bcc.eventHub.subscribe(
+          await this.runtime.eventHub.subscribe(
             'EventHub',
             null,
             'MailEvent',
@@ -105,8 +68,8 @@ module.exports = class SmartAgentOnboarding extends Initializer {
               // store block as uptime
               await api.redis.clients.client.set('evannetwork:smartAgentOnboarding:lastBlock', event.blockNumber)
               const {sender, recipient} = event.returnValues
-              const mailboxDomain = api.bcc.nameResolver.getDomainName(api.config.eth.nameResolver.domains.mailbox)
-              const mailboxAddress = await api.bcc.nameResolver.getAddress(mailboxDomain)
+              const mailboxDomain = this.runtime.nameResolver.getDomainName(api.config.eth.nameResolver.domains.mailbox)
+              const mailboxAddress = await this.runtime.nameResolver.getAddress(mailboxDomain)
               // only handle mailbox events of registered mailbox, only handle mails to smart agent
               return mailboxAddress === sender && config.ethAccount === recipient
             },
@@ -157,14 +120,43 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           api.log(`could not bind onboardingListener; ${ ex.message || ex }`, 'warning')
         }
       }
-    }
-    const smartAgentOnboarding = new SmartAgentOnboarding(config)
-    await smartAgentOnboarding.initialize()
-    await smartAgentOnboarding.bindOnboardingListener()
 
-    api[this.name] = {
-      sendInvite: this.sendInvite,
-      sendReplyAccept: async (sessionId, accountId) => {
+      async sendInvite(from, to, amount, transferred, mailData, mailId = null) {
+        // create onboarding session
+        const sessionId = uuid.v4()
+        api.log(`starting onboarding session "${sessionId}"`)
+        await api.redis.clients.client.hmset(`evannetwork:smartAgentOnboarding:sessions:${sessionId}`, {
+          inviter: from,
+          invited: to,
+          mailId,
+          weiToSend: transferred || api.eth.web3.utils.toWei(amount)
+        })
+        if(typeof mailData == 'string'){
+          mailData = JSON.parse(mailData)
+        }
+
+        if(!config.mailOptions.mailBody[mailData.lang]) mailData.lang = 'en'
+        if(!amount && transferred) amount = api.eth.web3.utils.fromWei(transferred);
+
+        const mailBody = _.template(config.mailOptions.mailBody[mailData.lang])({
+          sessionId,
+          inviteeAddress: from,
+          inviteeAlias: mailData.fromAlias,
+          eveAmount: amount,
+          targetMail: mailData.to,
+          inviteMail: mailData.body
+        })
+        const mail = {
+          from: config.mailOptions.from,
+          html: mailBody,
+          subject: mailData.subject,
+          to: mailData.to
+        }
+        
+        return promisify(transport.sendMail).bind(transport)(mail)
+      }
+
+      async sendReplyAccept(sessionId, accountId) {
         const { inviter, invited, weiToSend, mailId, } = await api.redis.clients.client.hgetall(
           `evannetwork:smartAgentOnboarding:sessions:${sessionId}`)
         if (!inviter || !invited) {
@@ -181,15 +173,16 @@ module.exports = class SmartAgentOnboarding extends Initializer {
             throw new Error('funds for this invitation already transferred')
           }
         } else {
-          await api.bcc.executor.executeSend({
+          await this.runtime.executor.executeSend({
             from: config.ethAccount,
             gas: 100000,
             to: accountId,
             value: weiToSend,
           })
         }
-      },
-      sendReplyReject: async (sessionId, bmailBody) => {
+      }
+
+      async sendReplyReject(sessionId, bmailBody) {
         const { inviter, invited, weiToSend, mailId, } = await api.redis.clients.client.hgetall(
           `evannetwork:smartAgentOnboarding:sessions:${sessionId}`)
         if (!inviter || !invited) {
@@ -219,7 +212,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
             api.log('funds for this invitation already transferred', 'error')
           }
         } else {
-          return await api.bcc.executor.executeSend({
+          return await this.runtime.executor.executeSend({
             from: config.ethAccount,
             gas: 100000,
             to: inviter,
@@ -228,6 +221,10 @@ module.exports = class SmartAgentOnboarding extends Initializer {
         }
       }
     }
+    const smartAgentOnboarding = new SmartAgentOnboarding(config)
+    await smartAgentOnboarding.initialize()
+    await smartAgentOnboarding.bindOnboardingListener()
+    api.smartAgentOnboarding = smartAgentOnboarding
   }
 
   async start () {}
