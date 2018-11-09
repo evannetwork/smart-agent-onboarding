@@ -5,6 +5,8 @@
 - smart agent now uses own `runtime` instead of `api.bcc` for transactions
 
 ### Fixes
+- fix runtime reference in initializer
+
 ### Deprecations
 
 

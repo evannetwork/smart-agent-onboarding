@@ -77,7 +77,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
               const that = this;
               const handleEvent = async () => {
                 const {mailId, recipient} = event.returnValues
-                const bmail = await that.mailbox.getMail(mailId)
+                const bmail = await that.runtime.mailbox.getMail(mailId)
                 if (!bmail) {
                   throw new Error(`could not get onboarding bmail ${mailId}, see previous logs for details`)
                 }
@@ -87,7 +87,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
                   const mailType = attachments[0].type
                   if (mailType === 'onboardingEmail') {
                     // if UTC was provided
-                    const transferedWei = await that.mailbox.getBalanceFromMail(mailId)
+                    const transferedWei = await that.runtime.mailbox.getBalanceFromMail(mailId)
                     if (parseInt(transferedWei, 10) > 0) {
                       api.smartAgentOnboarding.sendInvite(
                         bmail.content.from,
