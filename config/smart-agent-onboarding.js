@@ -34,7 +34,7 @@ exports['default'] = {
     return {
       disabled: process.env.SMART_AGENT_ONBOARDING_DISABLED ?  JSON.parse(process.env.SMART_AGENT_ONBOARDING_DISABLED) : true,
       ethAccount: '0x063fB42cCe4CA5448D69b4418cb89E663E71A139',
-      ignoreKeyExchange: true,
+      ignoreKeyExchange: false,
       mailOptions: {
         from: '"evan.network" <noreply@evan.network>',
         mailBody: {
