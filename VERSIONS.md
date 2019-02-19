@@ -2,12 +2,16 @@
 
 ## Next Version
 ### Features
+### Fixes
+### Deprecations
+
+
+## Version 1.0.0
+### Features
 - smart agent now uses own `runtime` instead of `api.bcc` for transactions
 
 ### Fixes
 - fix runtime reference in initializer
-
-### Deprecations
 
 
 ## Version 0.9.0
