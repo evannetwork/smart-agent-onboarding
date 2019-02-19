@@ -39,8 +39,8 @@ exports['default'] = {
       mailOptions: {
         from: '"evan.network" <noreply@evan.network>',
         mailBody: {
-          en: fs.readFileSync(__dirname + '/../node_modules/smart-agent-faucet/templates/mail_en.html', {encoding:'utf-8'}),
-          de: fs.readFileSync(__dirname + '/../node_modules/smart-agent-faucet/templates/mail_de.html', {encoding:'utf-8'})
+          en: fs.readFileSync(__dirname + '/../node_modules/smart-agent-onboarding/templates/mail_en.html', {encoding:'utf-8'}),
+          de: fs.readFileSync(__dirname + '/../node_modules/smart-agent-onboarding/templates/mail_de.html', {encoding:'utf-8'})
         }
       },
     }

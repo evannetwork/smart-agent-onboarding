@@ -1,28 +1,28 @@
 /*
-  Copyright (C) 2018-present evan GmbH. 
-  
+  Copyright (C) 2018-present evan GmbH.
+
   This program is free software: you can redistribute it and/or modify it
-  under the terms of the GNU Affero General Public License, version 3, 
-  as published by the Free Software Foundation. 
-  
-  This program is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  under the terms of the GNU Affero General Public License, version 3,
+  as published by the Free Software Foundation.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the GNU Affero General Public License for more details. 
-  
+  See the GNU Affero General Public License for more details.
+
   You should have received a copy of the GNU Affero General Public License along with this program.
   If not, see http://www.gnu.org/licenses/ or write to the
-  
+
   Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA, 02110-1301 USA,
-  
-  or download the license from the following URL: https://evan.network/license/ 
-  
+
+  or download the license from the following URL: https://evan.network/license/
+
   You can be released from the requirements of the GNU Affero General Public License
   by purchasing a commercial license.
   Buying such a license is mandatory as soon as you use this software or parts of it
-  on other blockchains than evan.network. 
-  
-  For more information, please contact evan GmbH at this address: https://evan.network/license/ 
+  on other blockchains than evan.network.
+
+  For more information, please contact evan GmbH at this address: https://evan.network/license/
 */
 
 'use strict'
@@ -150,9 +150,17 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           from: config.mailOptions.from,
           html: mailBody,
           subject: mailData.subject,
-          to: mailData.to
+          to: mailData.to,
+          attachments: [
+            {
+              filename:     'logo.png',
+              contentType:  'image/png',
+              cid:          'logoCID',
+              path:      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALwAAAA+CAMAAACm74FKAAACKFBMVEUAAAD///////////////////////9ttrb///////////////////////////////9pw8P///////////9mzL////////////////////////////9hysH///////////////////9mxb3///////////9lycP///////////9jxb////////////////////////9kyMP///////////////////////////////9kx7////////////////////////////////////////9jxsL///////////////////////////////////////////9jx8JlxcD///////////////////////////////9lxsH///////////9kxsL///////////////////////////////////////////////////////////////////9kx8H///////////////////////////////////////////////////////////////////9kxsH///////////////////////9kxsL///////////////////9kxsH///////////////////////////////////////////////////////////////9kxsH///////////////////////////////////////////////////////////////////////////////9kxsH///9CLXkkAAAAtnRSTlMAAQIDBAUGBwcJCgsMDQ8QERESExQVFhcZGhscHR0fICEiIyMkJSYmKSssLC0uLzAxMzM0Nzg5PD0/QEBBQkNER0pLTE5QUFRWV1lbXF1eX2JkZWVmZ2lqbG1ub3FzdHV1eXp8fX5/gYOEhYaHiImKi4yMjo+RlpiZm6ChoqSlp6qrr7CwsbKztLa3uLq9v8DBw8TGx8jJysvMzc7P0dTW2d3d3t/l5unq7e/x8vP09/j6+/z9/hRUHnYAAAABYktHRLfdADtnAAAC40lEQVRo3u2a+VcSURTHLyCKlpC2aURiplmaWVlEqbRqtmAlaott0kahlK22WFmmtmtgWZpkWZalldD994L3xg7qTJNwcpDe56f73vty+cDM8IZzBuK1YgAhTkeIg/Go6ZKSDOSi/abTnE6MeBDlBIoRS3Lb6WAHTws7XVpGBsmi/Q6Q3EzR3GEmz+SZfCTKN14dT28w8uorgrTwyLt5cvcnKp/Hs3QnGPk/sIFH/jpPLp/JM3kmH8Hybc3j+RCMfGKzIK5/JS/VJsXkmTyT/9/k82SCQDDy9TyNJnWTGsVE5aXeYZk8k49k+aqNgsgD5R08gap7hAWB8g95clapf+f5OBTYL5w3KSbP5Jm8lPKrKsVQkNwi4UBOYL840X7ZJKeigwIepWS6tBwYDAaDwWBMWTb1VoSXUPGZv8+WYLU0knojLMmfzQ0UOcY5tIru6jFl+YtcUzRkm5IhyUSfXZFnmdK49NrUqIK0EXlFYQG5g4tZETIZotILSW4pWL1NiAP0Dk7zHHGojJQvfPekN/1FLa6HHjwHDlztHya0IXrqaIu+Jifu4uRlDVhOJjN+hswzUfm7JPcWrNiZZcdLZO4sblO2DCX6y8XYlUoOQiGenOt95YTOT+SLrcPTmU/QSOWxY18KlT96yvf5pJAvh2y8RebasfF2Nxr8ZSw6aU719WnJN/N3nYdGXDjN52qj8j80I+f8I2+rTBL5Ysjk5F+jo6amJn2UPDR9udA+D21oJqM3XiUUjcj3/75gceCzXmL5a7gFgJwIoPS4QUWqCuyphfduD72Sb2AR1PteMkb+omG4I1pa+ZSPw93v+uj6SxxsJYUWcTM0oItOp/fjID6Wj5Wvhmq8PPnyuRY9aCyFdDKh0n5sDS21x+3c/8tSixpWWgzc65L220qjaLnTzM2lWXIhancZefJvxpGQOXhekD30DbeS3N5w3LDXCR+UB2F/t8HkmTyTn0LyMfMFmTUq+AtuGDgVCJcpSQAAAABJRU5ErkJggg=='
+            }
+          ]
         }
-        
+
         return promisify(transport.sendMail).bind(transport)(mail)
       }
 
