@@ -32,8 +32,6 @@ const {promisify} = require('util')
 const _ = require('underscore')
 const uuid = require('uuid')
 
-
-const config = api.config.smartAgentOnboarding
 let transport
 
 module.exports = class SmartAgentOnboarding extends Initializer {
@@ -46,13 +44,13 @@ module.exports = class SmartAgentOnboarding extends Initializer {
   }
 
   async initialize () {
-    if (config.disabled) {
+    if (api.config.smartAgentOnboarding.disabled) {
       return
     }
     class SmartAgentOnboarding extends api.smartAgents.SmartAgent {
       async initialize() {
         await super.initialize()
-        transport = nodemailer.createTransport(config.mailTransportOptions)
+        transport = nodemailer.createTransport(this.config.mailTransportOptions)
       }
 
       async bindOnboardingListener() {
@@ -71,7 +69,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
               const mailboxDomain = this.runtime.nameResolver.getDomainName(api.config.eth.nameResolver.domains.mailbox)
               const mailboxAddress = await this.runtime.nameResolver.getAddress(mailboxDomain)
               // only handle mailbox events of registered mailbox, only handle mails to smart agent
-              return mailboxAddress === sender && config.ethAccount === recipient
+              return mailboxAddress === sender && this.config.ethAccount === recipient
             },
             async (event) => {
               const that = this;
@@ -135,10 +133,10 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           mailData = JSON.parse(mailData)
         }
 
-        if(!config.mailOptions.mailBody[mailData.lang]) mailData.lang = 'en'
+        if(!this.config.mailOptions.mailBody[mailData.lang]) mailData.lang = 'en'
         if(!amount && transferred) amount = api.eth.web3.utils.fromWei(transferred);
 
-        const mailBody = _.template(config.mailOptions.mailBody[mailData.lang])({
+        const mailBody = _.template(this.config.mailOptions.mailBody[mailData.lang])({
           sessionId,
           inviteeAddress: from,
           inviteeAlias: mailData.fromAlias,
@@ -147,7 +145,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           inviteMail: mailData.body
         })
         const mail = {
-          from: config.mailOptions.from,
+          from: this.config.mailOptions.from,
           html: mailBody,
           subject: mailData.subject,
           to: mailData.to,
@@ -182,7 +180,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           }
         } else {
           await this.runtime.executor.executeSend({
-            from: config.ethAccount,
+            from: this.config.ethAccount,
             gas: 100000,
             to: accountId,
             value: weiToSend,
@@ -209,7 +207,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
               }],
             },
           },
-          config.ethAccount,
+          this.config.ethAccount,
           inviter,
         )
         if (mailId) {
@@ -221,7 +219,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           }
         } else {
           return await this.runtime.executor.executeSend({
-            from: config.ethAccount,
+            from: this.config.ethAccount,
             gas: 100000,
             to: inviter,
             value: weiToSend,
@@ -229,7 +227,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
         }
       }
     }
-    const smartAgentOnboarding = new SmartAgentOnboarding(config)
+    const smartAgentOnboarding = new SmartAgentOnboarding(api.config.smartAgentOnboarding)
     await smartAgentOnboarding.initialize()
     await smartAgentOnboarding.bindOnboardingListener()
     api.smartAgentOnboarding = smartAgentOnboarding
