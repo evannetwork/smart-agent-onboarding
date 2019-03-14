@@ -1,39 +1,33 @@
-/*
-  Copyright (C) 2018-present evan GmbH.
-
-  This program is free software: you can redistribute it and/or modify it
-  under the terms of the GNU Affero General Public License, version 3,
-  as published by the Free Software Foundation.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the GNU Affero General Public License for more details.
-
-  You should have received a copy of the GNU Affero General Public License along with this program.
-  If not, see http://www.gnu.org/licenses/ or write to the
-
-  Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA, 02110-1301 USA,
-
-  or download the license from the following URL: https://evan.network/license/
-
-  You can be released from the requirements of the GNU Affero General Public License
-  by purchasing a commercial license.
-  Buying such a license is mandatory as soon as you use this software or parts of it
-  on other blockchains than evan.network.
-
-  For more information, please contact evan GmbH at this address: https://evan.network/license/
-
-
-*/
 const fs = require('fs')
 
 exports['default'] = {
 
 
+  // makes your used evan.network accounts and private keys known to the blockchain-core
+  // so the library can sign and encrypt with it.
+  ethAccounts: {
+    '0x063fB42cCe4CA5448D69b4418cb89E663E71A139' :
+      'ccfa2077a3431de60e4cfbc05eacb0a593775f387fa7bb81ee513d7010f943f6',
+  },
+
+  // the different needed encryption keys associated with each account or account pair
+  // also collected and merged in the blockchain-core library
+  encryptionKeys: {
+
+    // comm key
+    //'0x063fB42cCe4CA5448D69b4418cb89E663E71A139,0x063fB42cCe4CA5448D69b4418cb89E663E71A139':
+    '0x1d487a3c06016262eec39da266e690895141ddbfa4ea79b1f6649903495a2dc5':
+      '346c22768f84f3050f5c94cec98349b3c5cbfa0b7315304e13647a4918ffffaa',
+
+    // data key
+    //'0x063fB42cCe4CA5448D69b4418cb89E663E71A139':
+    '0xa6af00dba5f5c88b4d43f327d21c2583ba3d793c5952b9d5b9947fb6baf6201e':
+      '346c22768f84f3050f5c94cec98349b3c5cbfa0b7315304e13647a4918ffffaa',
+  },
+
   smartAgentOnboarding: (api) => {
     return {
-      disabled: process.env.SMART_AGENT_ONBOARDING_DISABLED ?  JSON.parse(process.env.SMART_AGENT_ONBOARDING_DISABLED) : true,
+      disabled: false,
       ethAccount: '0x063fB42cCe4CA5448D69b4418cb89E663E71A139',
       ignoreKeyExchange: false,
       mailOptions: {
@@ -42,6 +36,14 @@ exports['default'] = {
           en: fs.readFileSync(__dirname + '/../node_modules/smart-agent-onboarding/templates/mail_en.html', {encoding:'utf-8'}),
           de: fs.readFileSync(__dirname + '/../node_modules/smart-agent-onboarding/templates/mail_de.html', {encoding:'utf-8'})
         }
+      },
+      mailTransportOptions: {
+        auth: {
+          user: 'apikey',
+          pass: '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',
+        },
+        host: 'smtp.sendgrid.net',
+        port: 587
       },
     }
   }
