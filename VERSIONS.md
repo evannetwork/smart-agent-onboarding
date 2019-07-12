@@ -2,8 +2,21 @@
 
 ## Next Version
 ### Features
+
 ### Fixes
+
 ### Deprecations
+
+
+## Version 1.1.0
+### Features
+- add logo to mail
+- add mail templates for de/en
+- move from *.evan.network to *.test.evan.network, to work with testnet as default network
+
+### Fixes
+- add missing dependency
+- update config handling to use
 
 
 ## Version 1.0.0
