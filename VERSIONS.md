@@ -12,7 +12,7 @@
 ### Features
 - add logo to mail
 - add mail templates for de/en
-- move from *.evan.network to *.test.evan.network, to work with testnet as default network
+- move from \*.evan.network to \*.test.evan.network, to work with testnet as default network
 
 ### Fixes
 - add missing dependency
