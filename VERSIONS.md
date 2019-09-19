@@ -8,11 +8,17 @@
 ### Deprecations
 
 
+## Version 1.1.1
+### Fixes
+- add `uuid` as dependency
+- fix onboarding agent with new web3
+
+
 ## Version 1.1.0
 ### Features
 - add logo to mail
 - add mail templates for de/en
-- move from \*.evan.network to \*.test.evan.network, to work with testnet as default network
+- move from *.evan.network to *.test.evan.network, to work with testnet as default network
 
 ### Fixes
 - add missing dependency
