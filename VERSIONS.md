@@ -8,6 +8,12 @@
 ### Deprecations
 
 
+## Version 1.1.1
+### Fixes
+- add `uuid` as dependency
+- fix onboarding agent with new web3
+
+
 ## Version 1.1.0
 ### Features
 - add logo to mail

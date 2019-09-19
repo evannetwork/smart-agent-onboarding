@@ -3,13 +3,14 @@
   "author": "evan GmbH",
   "name": "smart-agent-onboarding",
   "description": "smart agent that helps users to get into contact with new or existing members",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "engines": {
     "node": ">=8.0.0"
   },
   "dependencies": {
     "nodemailer": "^4.4.2",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "uuid": "^3.2.1"
   },
   "peerDependencies": {
     "actionhero": "18.1.0"
