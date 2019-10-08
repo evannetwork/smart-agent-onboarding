@@ -8,6 +8,11 @@
 ### Deprecations
 
 
+## Version 1.1.2
+### Fixes
+- remove custom agpl appendix
+
+
 ## Version 1.1.1
 ### Fixes
 - add `uuid` as dependency
