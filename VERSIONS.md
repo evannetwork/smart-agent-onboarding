@@ -4,6 +4,7 @@
 ### Features
 
 ### Fixes
+- fix payout of sent onboarding eves
 
 ### Deprecations
 
