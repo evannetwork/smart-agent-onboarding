@@ -165,9 +165,9 @@ module.exports = class SmartAgentOnboarding extends Initializer {
         await api.redis.clients.client.del(`evannetwork:smartAgentOnboarding:sessions:${sessionId}`)
 
         if (mailId) {
-          const transferedWei = await smartAgentOnboarding.mailbox.getBalanceFromMail(mailId)
+          const transferedWei = await this.runtime.mailbox.getBalanceFromMail(mailId)
           if (parseInt(transferedWei, 10) > 0) {
-            await smartAgentOnboarding.mailbox.withdrawFromMail(mailId, accountId)
+            await this.runtime.mailbox.withdrawFromMail(mailId, accountId)
           } else {
             throw new Error('funds for this invitation already transferred')
           }
@@ -204,9 +204,9 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           inviter,
         )
         if (mailId) {
-          const transferedWei = await smartAgentOnboarding.mailbox.getBalanceFromMail(mailId)
+          const transferedWei = await this.runtime.mailbox.getBalanceFromMail(mailId)
           if (parseInt(transferedWei, 10) > 0) {
-            return await smartAgentOnboarding.mailbox.withdrawFromMail(mailId, inviter)
+            return await this.runtime.mailbox.withdrawFromMail(mailId, inviter)
           } else {
             api.log('funds for this invitation already transferred', 'error')
           }

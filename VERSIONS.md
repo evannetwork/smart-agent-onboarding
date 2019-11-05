@@ -8,6 +8,11 @@
 ### Deprecations
 
 
+## Version 1.1.3
+### Fixes
+- fix payout of sent onboarding eves
+
+
 ## Version 1.1.2
 ### Fixes
 - remove custom agpl appendix
