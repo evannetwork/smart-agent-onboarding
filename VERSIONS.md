@@ -2,6 +2,7 @@
 
 ## Next Version
 ### Features
+- allow sending onboarding bmails without funds
 
 ### Fixes
 
