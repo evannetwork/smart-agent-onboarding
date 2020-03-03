@@ -161,7 +161,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           if (parseInt(transferedWei, 10) > 0) {
             await this.runtime.mailbox.withdrawFromMail(mailId, accountId)
           } else {
-            throw new Error('funds for this invitation already transferred')
+            this.runtime.logger.log('funds for this invitation already transferred', 'warning')
           }
         } else {
           await this.runtime.executor.executeSend({
