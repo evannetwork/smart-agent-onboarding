@@ -5,6 +5,8 @@
 - allow sending onboarding bmails without funds
 
 ### Fixes
+- redirect email invitation to `onboarding.vue.evan`
+- don't throw an error by sending zero eve
 
 ### Deprecations
 
