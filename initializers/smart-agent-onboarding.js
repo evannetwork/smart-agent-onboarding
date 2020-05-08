@@ -77,23 +77,15 @@ module.exports = class SmartAgentOnboarding extends Initializer {
                 if (attachments && attachments.length) {
                   const mailType = attachments[0].type
                   if (mailType === 'onboardingEmail') {
-                    // if UTC was provided
                     const transferedWei = await that.runtime.mailbox.getBalanceFromMail(mailId.toString())
-                    if (parseInt(transferedWei, 10) > 0) {
-                      api.smartAgentOnboarding.sendInvite(
-                        bmail.content.from,
-                        recipient,
-                        0,
-                        transferedWei,
-                        attachments[0].data,
-                        mailId,
-                      )
-                    } else {
-                      api.log(
-                        'onboardingEmail, sent, but no onboarding UTC was provided, ignoring this request',
-                        'error'
-                      )
-                    }
+                    api.smartAgentOnboarding.sendInvite(
+                      bmail.content.from,
+                      recipient,
+                      0,
+                      transferedWei,
+                      attachments[0].data,
+                      mailId,
+                    )
                   }
                 }
               }
@@ -169,7 +161,7 @@ module.exports = class SmartAgentOnboarding extends Initializer {
           if (parseInt(transferedWei, 10) > 0) {
             await this.runtime.mailbox.withdrawFromMail(mailId, accountId)
           } else {
-            throw new Error('funds for this invitation already transferred')
+            this.runtime.logger.log('funds for this invitation already transferred', 'warning')
           }
         } else {
           await this.runtime.executor.executeSend({

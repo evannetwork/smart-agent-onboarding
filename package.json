@@ -3,7 +3,7 @@
   "author": "evan GmbH",
   "name": "smart-agent-onboarding",
   "description": "smart agent that helps users to get into contact with new or existing members",
-  "version": "1.1.3",
+  "version": "1.2.0",
   "engines": {
     "node": ">=8.0.0"
   },
