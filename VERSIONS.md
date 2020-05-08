@@ -2,13 +2,19 @@
 
 ## Next Version
 ### Features
+
+### Fixes
+
+### Deprecations
+
+
+## Version 1.2.0
+### Features
 - allow sending onboarding bmails without funds
 
 ### Fixes
 - redirect email invitation to `onboarding.vue.evan`
 - don't throw an error by sending zero eve
-
-### Deprecations
 
 
 ## Version 1.1.3
